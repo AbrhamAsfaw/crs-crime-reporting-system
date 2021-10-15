@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/layout :: headFragment (pageTitle = 'Wanted Person')">
+</head>
+<body class="  amber lighten-1">
+<!-- navbar -->
+<header th:replace="fragments/layout :: headerFragmentAdmin">
+</header>
+<main class="amber lighten-3">
+    <section class=" section row left-align container">
+        <div class="row">
+    <div  class="col s12">
+      <ul class="tabs amber lighten-3">
+        <li class="tab col s6"><a id = "new_post_tab"  class=" black-text waves-effect waves-green active" href="#post_wp">New Post</a></li>
+        <li class="tab col s6"><a id = "prev_post_tab"  class=" black-text waves-effect waves-green" href="#wp_list">Previous Posts</a></li>
+      </ul>
+    </div>
+    <div id="post_wp" class="  container row">
+      <form method="POST" class="col s12" th:action="@{/admin/wantedPerson}" th:object="${wantedPerson}"  name="wp_form" enctype="multipart/form-data" >
+        <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
+        <h4>Add a Wanted Person Post</h4>
+        	 <div class="row">
+            <div class="row" th:if="${#fields.hasErrors()}">
+				<span class="red-text"> Validation Error! Please correct your input and resubmit. </span>
+			</div>
+        
+        <div class="input-field col s4">
+          <input th:field="*{fullname}" id="name" type="text" class="validate">
+          <label for="name">Full Name</label>
+          <span
+					class="helper-text red-text" th:if="${#fields.hasErrors('fullname')}"
+					th:errors="*{fullname}">Error
+			</span>
+        </div>
+
+        <div class="input-field col s4 ">
+          <input th:field="*{age}" id="Age" type="number" class="validate">
+          <label for="Age">Age</label>
+           <span
+					class="helper-text red-text" th:if="${#fields.hasErrors('age')}"
+					th:errors="*{age}">Error
+			</span>
+        </div>
+
+        <div class="input-field col s4 ">
+          <br>
+      <span>
+      <label>
+        <input  th:field="*{gender}" th:value="Male" name="group1" class="with-gap" type="radio"  />
+        <span>Male</span>
+      </label></span>
+      <span>
+      <label>
+        <input th:field="*{gender}" th:value="Female" name="group1" class="with-gap" type="radio" checked/>
+        <span>Female</span>
+      </label></span>
+        </div>
+
+      </div>
+      
+            <div class="row">
+         
+         
+
+   <div class="input-field col s12">
+          <textarea  th:field="*{description}" id="content" class="materialize-textarea"></textarea>
+          <label for="content">Please describe the wanted person in detail</label>
+          <span
+					class="helper-text red-text" th:if="${#fields.hasErrors('description')}"
+					th:errors="*{description}">Error
+			</span>
+        </div>
+        <div class="file-field input-field  col s12">
+      <div class="btn">
+        <span>Upload image of the wanted person</span>
+        <input name="file" type="file">
+      </div>
+      <div class="file-path-wrapper">
+        <input  class="file-path validate" type="text">
+      </div>
+      
+    </div>
+</div>
+
+      <div class="row">
+        <div class="input-field col s4 "></div>
+         <div class="input-field col s4 ">
+        <button type='submit' name='btn_crime_post' class='col s12 btn btn-large waves-green waves-effect purple darken-1'>Post</button></div>
+        <div class="input-field col s4 "></div>
+      </div>
+     
+    </form>
+  </div>
+
+ <div id="wp_list" class=" container row ">
+       
+       <div class="row prev-wp-card">
+        <div class="col s12">
+          <h4>Previous Posts</h4>
+        </div>
+      </div>
+      <div  class="row " th:each = "wp : ${all_wp}">
+    <div  class="col s12 l12 prev-wp-card">
+         <div class="card   blue-grey lighten-4 ">
+        <div class="card-content black-text">
+        <span class="new badge" data-badge-caption="" th:text = "${#dates.format(wp.createdAt,'dd-MM-yyyy HH:mm')}" >4</span>
+          <p th:utext = "|<strong>Full Name:</strong> ${wp.fullname}		<strong>Age:</strong> ${wp.age} <br><strong>Gender:</strong> ${wp.gender}|" class="card-title">{Name Age Gender} 
+          </p>
+          <img class="materialboxed" width="250" height="250" th:src="${wp.picturePath}">
+          <p th:text = "${wp.description}">{I am a very simple card. I am good at containing small bits of information.
+                    I am convenient because I require little markup to use effectively.}</p>
+        </div>
+          <div class="card-action right-align">
+          <a  th:href = "@{/admin/wantedPerson/edit/{id} (id=${wp.id}) }" class="btn-floating waves-effect waves-light amber accent-4"><i class="fa fa-edit fa-2x"></i></a>
+          <button  data-target="delete_modal"  th:onclick="'showDeleteModalWp(\''+${wp.id} + '\')'"  class="btn-floating waves-effect modal-trigger waves-light red darken-1"><i class="fa fa-trash-o fa-2x"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+     
+  </div>
+
+</div>
+        
+    </section>
+     </main>
+     
+  <div th:replace="fragments/layout :: deleteModalFragment">
+    </div>
+
+    <footer th:replace="fragments/layout :: footerFragment">
+    </footer>
+<div th:replace="fragments/layout :: scriptFragment"></div>
+</body>
+</html>
